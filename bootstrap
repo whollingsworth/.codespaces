@@ -1,0 +1,53 @@
+#!/bin/sh
+
+CODESPACES_HOME="/workspaces/.codespaces/.persistedshare/dotfiles"
+
+####################
+# RESTORE DOTFILES #
+####################
+
+DOTFILES_HOME="${HOME}/.dotfiles"
+OH_MY_ZSH_CUSTOM="${HOME}/.config/zsh/.oh-my-zsh/custom/"
+
+git clone https://github.com/wthollingsworth/.dotfiles.git "${DOTFILES_HOME}" &>/dev/null
+
+# Install dotfiles with stow
+sudo apt install stow
+for dir in "${DOTFILES_HOME}"/*; do
+  stow --dir="${DOTFILES_HOME}" --target="${HOME}" "$(basename "${dir}")"
+done
+
+# Restore zsh configuration that doesn't live in ${DOTFILES_HOME}
+cat <<-EOF >"${HOME}/.zshenv"
+  if [[ -z "\${XDG_CONFIG_HOME}" ]]
+  then
+    export XDG_CONFIG_HOME="\${HOME}/.config"
+  fi
+
+  if [[ -d "\${XDG_CONFIG_HOME}/zsh" ]]
+  then
+    export ZDOTDIR="\${XDG_CONFIG_HOME}/zsh"
+  fi
+EOF
+
+ZSH="${HOME}/.config/zsh/.oh-my-zsh" /bin/sh -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${OH_MY_ZSH_CUSTOM}/plugins/zsh-syntax-highlighting" &>/dev/null
+git clone https://github.com/moarram/headline.git "${OH_MY_ZSH_CUSTOM}/themes/headline" &>/dev/null
+ln --symbolic "${OH_MY_ZSH_CUSTOM}/themes/headline/headline.zsh-theme" "${OH_MY_ZSH_CUSTOM}/themes/headline.zsh-theme"
+
+####################
+# INSTALL SOFTWARE #
+####################
+
+BREW_COMMAND="/home/linuxbrew/.linuxbrew/bin/brew" # `brew` is not in path since `.zshrc` is not sourced
+BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is not exported since `.zshrc` is not sourced
+
+# Homebrew
+/bin/bash -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+${BREW_COMMAND} bundle install --file="${BREWFILE_PATH}"
+
+#################
+# SET THE SHELL #
+#################
+
+sudo chsh --shell "/usr/bin/zsh" "$(whoami)"
