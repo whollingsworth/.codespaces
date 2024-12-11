@@ -28,6 +28,8 @@ cat <<-EOF >"${HOME}/.zshenv"
   then
     export ZDOTDIR="\${XDG_CONFIG_HOME}/zsh"
   fi
+
+  export PANORAMA_TOP="/workspaces"
 EOF
 
 ZSH="${HOME}/.config/zsh/.oh-my-zsh" /bin/sh -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
