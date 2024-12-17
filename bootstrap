@@ -53,3 +53,4 @@ ${BREW_COMMAND} bundle install --file="${BREWFILE_PATH}"
 #################
 
 sudo chsh --shell "/usr/bin/zsh" "$(whoami)"
+cp "${CODESPACES_HOME}/.zshrc.codespaces" "${HOME}/.config/zsh/.zshrc.local" # Panorama shell includes
