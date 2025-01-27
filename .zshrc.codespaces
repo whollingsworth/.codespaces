@@ -10,3 +10,4 @@ SCHOOL_SUPPLIES_HOME=${PANORAMA_TOP}/school-supplies
 source "/usr/local/share/chruby/chruby.sh"
 source "/usr/local/share/chruby/auto.sh"
 source "${SCHOOL_SUPPLIES_HOME}/bin/shell_includes.sh"
+source "${SCHOOL_SUPPLIES_HOME}/bin/aws_sso_shell_includes.sh"
