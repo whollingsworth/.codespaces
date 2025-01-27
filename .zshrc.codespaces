@@ -1,6 +1,8 @@
 export PANORAMA_TOP=/workspaces
 export INOTIFY_ENABLED=true
 
+export CDPATH=".:/workspaces/monorama/apps:${CDPATH}"
+
 # These files are sourced in our devcontainer's on-create.sh, but that's for
 # bash.
 SCHOOL_SUPPLIES_HOME=${PANORAMA_TOP}/school-supplies
