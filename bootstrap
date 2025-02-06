@@ -1,6 +1,7 @@
 #!/bin/sh
 
 CODESPACES_HOME="/workspaces/.codespaces/.persistedshare/dotfiles"
+MONOREPO_HOME="/workspaces/monorama"
 
 ####################
 # RESTORE DOTFILES #
@@ -47,6 +48,19 @@ BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is 
 # Homebrew
 /bin/bash -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ${BREW_COMMAND} bundle install --file="${BREWFILE_PATH}"
+
+# Language Support
+bundle config set without container_only
+gem install ruby-lsp ruby-lsp-rails panolint-rails
+
+cat <<-EOF >"${MONOREPO_HOME}/.git/info/exclude"
+  apps/*/.nvimrc
+  apps/*/.nvim.lua
+  apps/*/.exrc
+  apps/*/.lazy.lua
+EOF
+cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/rainbow-backend/.lazy.lua"
+cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/nds/.lazy.lua"
 
 #################
 # SET THE SHELL #
