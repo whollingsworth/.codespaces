@@ -50,6 +50,9 @@ BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is 
 ${BREW_COMMAND} bundle install --file="${BREWFILE_PATH}"
 
 # Language Support
+# TODO: Maybe it would be better to do all of this in a post install script?
+# The gems _might_ not be getting installed, and pan-set-up-overcommit feels
+# out of place here.
 bundle config set without container_only
 gem install ruby-lsp ruby-lsp-rails panolint-rails
 
@@ -59,6 +62,7 @@ cat <<-EOF >"${MONOREPO_HOME}/.git/info/exclude"
   apps/*/.exrc
   apps/*/.lazy.lua
 EOF
+# pan-set-up-overcommit
 cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/rainbow-backend/.lazy.lua"
 cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/nds/.lazy.lua"
 

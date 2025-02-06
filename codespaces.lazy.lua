@@ -1,5 +1,11 @@
 return {
-	{ import = "lazyvim.plugins.extras.lang.ruby" },
+	-- This causes import order issues that I can only resolve by manually adding
+	-- it to `lua/config/lazy.lua`, which doesn't seem smart.
+	-- { import = "lazyvim.plugins.extras.lang.ruby" },
+	{
+		"nvim-treesitter/nvim-treesitter",
+		opts = { ensure_installed = { "ruby" } },
+	},
 	{
 		"neovim/nvim-lspconfig",
 		opts = {
