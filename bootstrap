@@ -20,17 +20,25 @@ done
 
 # Restore zsh configuration that doesn't live in ${DOTFILES_HOME}
 cat <<-EOF >"${HOME}/.zshenv"
-  if [[ -z "\${XDG_CONFIG_HOME}" ]]
-  then
-    export XDG_CONFIG_HOME="\${HOME}/.config"
-  fi
+	if [[ -z "\${XDG_CONFIG_HOME}" ]]
+	then
+		export XDG_CONFIG_HOME="\${HOME}/.config"
+	fi
 
-  if [[ -d "\${XDG_CONFIG_HOME}/zsh" ]]
-  then
-    export ZDOTDIR="\${XDG_CONFIG_HOME}/zsh"
-  fi
+	if [[ -d "\${XDG_CONFIG_HOME}/zsh" ]]
+	then
+		export ZDOTDIR="\${XDG_CONFIG_HOME}/zsh"
+	fi
 
-  export PANORAMA_TOP="/workspaces"
+	export PANORAMA_TOP="/workspaces"
+EOF
+
+cat <<-EOF >>"${HOME}/.zprofile"
+	# Set GIT_EDITOR to use Windsurf IDE when running inside Windsurf
+	if [[ -n "$VSCODE_GIT_ASKPASS_NODE" && "$VSCODE_GIT_ASKPASS_NODE" == *".windsurf-server"* ]]; then
+		# Using the integrated terminal in Windsurf
+		export GIT_EDITOR="windsurf --wait"	# Assumes the 'windsurf' command exists
+	fi
 EOF
 
 ZSH="${HOME}/.config/zsh/.oh-my-zsh" /bin/sh -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -65,6 +73,20 @@ EOF
 # pan-set-up-overcommit
 cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/rainbow-backend/.lazy.lua"
 cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/nds/.lazy.lua"
+
+##########################
+# WINDSURF CONFIGURATION #
+##########################
+
+WINDSURF_HOME="/home/codespace/.windsurf-server/data"
+mkdir --parents "${WINDSURF_HOME}/Machine" # Create the directory if it doesn't exist
+
+# Symlink the Windsurf remote settings
+for file in "${CODESPACES_HOME}/windsurf/Machine/"*; do
+  if [[ -f "$file" && "$(basename "$file")" != "." && "$(basename "$file")" != ".." ]]; then
+    ln -sf "$file" "${WINDSURF_HOME}/Machine/$(basename "$file")"
+  fi
+done
 
 #################
 # SET THE SHELL #
