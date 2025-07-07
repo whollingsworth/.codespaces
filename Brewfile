@@ -1,7 +1,7 @@
-tap "homebrew/bundle"
 brew "bat"
 brew "fd"
 brew "fzf"
+brew "helix"
 brew "neovim"
 brew "ripgrep"
 brew "shellcheck"
