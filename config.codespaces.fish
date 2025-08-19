@@ -6,7 +6,7 @@ set --export BROWSER /bin/true
 
 set --export PANORAMA_TOP /workspaces
 
-if test "$CODESPACES" = true -a command -v bass &>/dev/null
+if test "$CODESPACES" = true; and type bass &>/dev/null
     bass source $HOME/.panoramarc
 end
 
