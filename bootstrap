@@ -45,9 +45,32 @@ ln --symbolic "${OH_MY_ZSH_CUSTOM}/themes/headline/headline.zsh-theme" "${OH_MY_
 BREW_COMMAND="/home/linuxbrew/.linuxbrew/bin/brew" # `brew` is not in path since `.zshrc` is not sourced
 BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is not exported since `.zshrc` is not sourced
 
+NPM_COMMAND="/home/codespace/nvm/current/bin/npm"
+
+RUBIES_HOME="/home/codespace/.rubies"
+
 # Homebrew
 /bin/bash -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ${BREW_COMMAND} bundle install --file="${BREWFILE_PATH}"
+
+# LSP - Vue
+npm_packages=$(cat <<EOF
+  "@vue/language-server"
+	"typescript"
+	"@vtsls/language-server"
+	"@vue/typescript-plugin"
+	"vue"
+	"tsc"
+EOF
+)
+echo "${npm_packages}" | xargs -n1 ${NPM_COMMAND} install --global >/dev/null 2>&1
+
+# LSP - Ruby
+find /workspaces/monorama/apps -maxdepth 3 -name '.ruby-version' | \
+  xargs cat | \
+  grep -o -E '[0-9]\.[0-9]+\.[0-9]+' | \
+  sort -u | \
+  xargs -I{} sh -c "${RUBIES_HOME}/ruby-{}/bin/gem install ruby-lsp ruby-lsp-rails >/dev/null 2>&1"
 
 cat <<-EOF >"${MONOREPO_HOME}/.git/info/exclude"
   apps/*/.nvimrc
