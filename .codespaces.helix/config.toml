@@ -1,0 +1,2 @@
+[editor]
+workspace-lsp-roots = ["apps/nds", "apps/rainbow-backend", "apps/surveys", "apps/warehouse"]

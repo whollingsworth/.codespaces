@@ -1,0 +1,75 @@
+[[language]]
+name = "ruby"
+roots = [ ".git" ]
+language-servers = [ "ruby-lsp", "rubocop" ]
+diagnostic-severity = "hint"
+auto-format = true
+
+# gem install rubocop
+[language-server.rubocop]
+environment = { "BUNDLE_GEMFILE" = "/workspaces/monorama/.overcommit/Gemfile" }
+command = "bundle"
+args = [ "exec", "rubocop", "--lsp" ]
+# includes things like `map { ... }.compact` -> `filter_map { ... }`
+# config = { safeAutocorrect = false }
+
+# gem install ruby-lsp
+[language-server.ruby-lsp]
+command = "ruby-lsp"
+
+[language-server.ruby-lsp.config]
+codeActions = true
+codeLens = true
+completion = true
+definition = true
+diagnostics = true
+documentHighlights = true
+documentLink = true
+documentSymbols = true
+foldingRanges = true
+# ruby-lsp has built-in rubocop support, but it can't seem to pick up our specific rules
+formatting = false
+hover = true
+inlayHint = true
+onTypeFormatting = true
+selectionRanges = true
+semanticHighlighting = true
+signatureHelp = true
+typeHierarchy = true
+workspaceSymbol = true
+
+# This should be the best you can get in Helix.
+# * Apparently not all features are supported outside of VS Code
+# * Helix isn't even officially supported but most editors do not have completion support
+# * https://deepwiki.com/vuejs/language-tools/1.1-project-structure#core-package-roles
+# * https://deepwiki.com/vuejs/language-tools/1.1-project-structure#core-package-roles
+[[language]]
+name = "vue"
+file-types = ["vue", "ts.vue"]
+roots = [ ".git" ]
+# Vue Language Server 3.0.0+ requires vtsls for editors other than VS Code
+language-servers = [ "vtsls", "vuels" ]
+auto-format = true
+
+# npm install -g @vue/language-server
+[language-server.vuels]
+command = "vue-language-server"
+args = [ "--stdio" ]
+
+[[language]]
+name = "typescript"
+roots = [ ".git" ]
+language-servers = [ "vtsls" ]
+
+[language-server.vtsls]
+command = "vtsls"
+args = [ "--stdio" ]
+# npm install -g typescript @vtsls/language-server
+[language-server.vtsls.config]
+typescript = { tsdk = "$HOME/nvm/current/lib/node_modules/typescript/lib" }
+# npm install -g @vue/typescript-plugin vue-tsc
+# Specify a global plugin since this isn't in our project configuration
+[[language-server.vtsls.config.vtsls.tsserver.globalPlugins]]
+name = "@vue/typescript-plugin"
+location = "$HOME/nvm/current/lib/node_modules/@vue/language-server"
+languages = [ "vue" ]

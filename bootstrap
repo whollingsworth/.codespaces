@@ -73,14 +73,10 @@ find /workspaces/monorama/apps -maxdepth 3 -name '.ruby-version' | \
   xargs -I{} sh -c "${RUBIES_HOME}/ruby-{}/bin/gem install ruby-lsp ruby-lsp-rails >/dev/null 2>&1"
 
 cat <<-EOF >"${MONOREPO_HOME}/.git/info/exclude"
-  apps/*/.nvimrc
-  apps/*/.nvim.lua
-  apps/*/.exrc
-  apps/*/.lazy.lua
+	.helix/*
 EOF
 
-cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/rainbow-backend/.lazy.lua"
-cp "${CODESPACES_HOME}/codespaces.lazy.lua" "${MONOREPO_HOME}/apps/nds/.lazy.lua"
+cp --recursive "${CODESPACES_HOME}/.helix" "${MONOREPO_HOME}"
 
 ##########################
 # WINDSURF CONFIGURATION #
