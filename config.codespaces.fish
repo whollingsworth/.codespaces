@@ -11,4 +11,4 @@ if test "$CODESPACES" = true; and type bass &>/dev/null
 end
 
 # Make sure chruby-fish is in and autoloaded path
-set --universal XDG_DATA_DIRS /usr/local/share
+set --universal --export XDG_DATA_DIRS /usr/local/share
