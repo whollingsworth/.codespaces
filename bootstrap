@@ -70,13 +70,13 @@ find /workspaces/monorama/apps -maxdepth 3 -name '.ruby-version' | \
   xargs cat | \
   grep -o -E '[0-9]\.[0-9]+\.[0-9]+' | \
   sort -u | \
-  xargs -I{} sh -c "${RUBIES_HOME}/ruby-{}/bin/gem install ruby-lsp ruby-lsp-rails >/dev/null 2>&1"
+  xargs -I{} sh -c "${RUBIES_HOME}/ruby-{}/bin/gem install ruby-lsp ruby-lsp-rails" # >/dev/null 2>&1"
 
 cat <<-EOF >"${MONOREPO_HOME}/.git/info/exclude"
 	.helix/*
 EOF
 
-cp --recursive "${CODESPACES_HOME}/.helix" "${MONOREPO_HOME}"
+cp --recursive "${CODESPACES_HOME}/.codespaces.helix" "${MONOREPO_HOME}/.helix"
 
 ##########################
 # WINDSURF CONFIGURATION #
