@@ -3,6 +3,19 @@
 CODESPACES_HOME="/workspaces/.codespaces/.persistedshare/dotfiles"
 MONOREPO_HOME="/workspaces/monorama"
 
+############
+# HOMEBREW #
+############
+
+# APT-based install of GNU Stow is failing in Ubuntu 24.04 based images, but I
+# am also installing it via brew
+BREW_COMMAND="/home/linuxbrew/.linuxbrew/bin/brew" # `brew` is not in path since `config.fish` is not sourced
+BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is not exported since `config.fish` is not sourced
+
+/bin/bash -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+${BREW_COMMAND} bundle install --file="${BREWFILE_PATH}"
+
+
 ####################
 # RESTORE DOTFILES #
 ####################
@@ -12,8 +25,8 @@ DOTFILES_HOME="${HOME}/.dotfiles"
 git clone https://github.com/wthollingsworth/.dotfiles.git "${DOTFILES_HOME}" >/dev/null 2>&1
 
 # Install dotfiles with stow
-sudo apt install stow
-for dir in "${DOTFILES_HOME}"/*; do
+#sudo apt install stow
+for dir in "${DOTFILES_HOME}"/*/; do
   stow --dir="${DOTFILES_HOME}" --target="${HOME}" "$(basename "${dir}")"
 done
 
@@ -21,16 +34,9 @@ done
 # INSTALL SOFTWARE #
 ####################
 
-BREW_COMMAND="/home/linuxbrew/.linuxbrew/bin/brew" # `brew` is not in path since `config.fish` is not sourced
-BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is not exported since `config.fish` is not sourced
-
 NPM_COMMAND="/home/codespace/nvm/current/bin/npm"
 
 RUBIES_HOME="/home/codespace/.rubies"
-
-# Homebrew
-/bin/bash -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-${BREW_COMMAND} bundle install --file="${BREWFILE_PATH}"
 
 # LSP - Vue
 npm_packages=$(cat <<EOF
