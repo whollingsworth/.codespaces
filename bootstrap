@@ -8,7 +8,6 @@ MONOREPO_HOME="/workspaces/monorama"
 ####################
 
 DOTFILES_HOME="${HOME}/.dotfiles"
-OH_MY_ZSH_CUSTOM="${HOME}/.config/zsh/.oh-my-zsh/custom/"
 
 git clone https://github.com/wthollingsworth/.dotfiles.git "${DOTFILES_HOME}" >/dev/null 2>&1
 
@@ -18,32 +17,12 @@ for dir in "${DOTFILES_HOME}"/*; do
   stow --dir="${DOTFILES_HOME}" --target="${HOME}" "$(basename "${dir}")"
 done
 
-# Restore zsh configuration that doesn't live in ${DOTFILES_HOME}
-cat <<-EOF >"${HOME}/.zshenv"
-	if [[ -z "\${XDG_CONFIG_HOME}" ]]
-	then
-		export XDG_CONFIG_HOME="\${HOME}/.config"
-	fi
-
-	if [[ -d "\${XDG_CONFIG_HOME}/zsh" ]]
-	then
-		export ZDOTDIR="\${XDG_CONFIG_HOME}/zsh"
-	fi
-
-	export PANORAMA_TOP="/workspaces"
-EOF
-
-ZSH="${HOME}/.config/zsh/.oh-my-zsh" /bin/sh -c "$(curl --fail --silent --show-error --location https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${OH_MY_ZSH_CUSTOM}/plugins/zsh-syntax-highlighting" >/dev/null 2>&1
-git clone https://github.com/moarram/headline.git "${OH_MY_ZSH_CUSTOM}/themes/headline" >/dev/null 2>&1
-ln --symbolic "${OH_MY_ZSH_CUSTOM}/themes/headline/headline.zsh-theme" "${OH_MY_ZSH_CUSTOM}/themes/headline.zsh-theme"
-
 ####################
 # INSTALL SOFTWARE #
 ####################
 
-BREW_COMMAND="/home/linuxbrew/.linuxbrew/bin/brew" # `brew` is not in path since `.zshrc` is not sourced
-BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is not exported since `.zshrc` is not sourced
+BREW_COMMAND="/home/linuxbrew/.linuxbrew/bin/brew" # `brew` is not in path since `config.fish` is not sourced
+BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is not exported since `config.fish` is not sourced
 
 NPM_COMMAND="/home/codespace/nvm/current/bin/npm"
 
@@ -70,7 +49,7 @@ find /workspaces/monorama/apps -maxdepth 3 -name '.ruby-version' | \
   xargs cat | \
   grep -o -E '[0-9]\.[0-9]+\.[0-9]+' | \
   sort -u | \
-  xargs -I{} sh -c "${RUBIES_HOME}/ruby-{}/bin/gem install ruby-lsp ruby-lsp-rails" # >/dev/null 2>&1"
+  xargs -I{} sh -c "${RUBIES_HOME}/ruby-{}/bin/gem install ruby-lsp ruby-lsp-rails rubocop panolint panolint-rails" # >/dev/null 2>&1"
 
 cat <<-EOF >"${MONOREPO_HOME}/.git/info/exclude"
 	.helix/*
@@ -78,43 +57,9 @@ EOF
 
 cp --recursive "${CODESPACES_HOME}/.codespaces.helix" "${MONOREPO_HOME}/.helix"
 
-##########################
-# WINDSURF CONFIGURATION #
-##########################
-
-WINDSURF_HOME="/home/codespace/.windsurf-server/data"
-mkdir --parents "${WINDSURF_HOME}/Machine" # Create the directory if it doesn't exist
-
-cat <<-EOF >>"${HOME}/.zprofile"
-	# Set GIT_EDITOR to use Windsurf IDE when running inside Windsurf
-	if [[ -n "$VSCODE_GIT_ASKPASS_NODE" && "$VSCODE_GIT_ASKPASS_NODE" == *".windsurf-server"* ]]; then
-		# Using the integrated terminal in Windsurf
-		export GIT_EDITOR="windsurf --wait" # Assumes the 'windsurf' command exists
-	fi
-EOF
-
-cat <<-EOF >>"${HOME}/.config/fish/config.local.fish"
-# Set GIT_EDITOR to use Windsurf IDE when running inside Windsurf
-if set -q VSCODE_GIT_ASKPASS_NODE; and string match -q '*\.windsurf-server*' \$VSCODE_GIT_ASKPASS_NODE
-	# Using the integrated terminal in Windsurf
-  set -x GIT_EDITOR "windsurf --wait" # Assumes the 'windsurf' command exists
-end
-EOF
-
-# Symlink the Windsurf remote settings
-for file in "${CODESPACES_HOME}/windsurf/Machine/"*; do
-  if [ -f "$file" ] && [ "$(basename "$file")" != "." ] && [ "$(basename "$file")" != ".." ]; then
-    ln -sf "$file" "${WINDSURF_HOME}/Machine/$(basename "$file")"
-  fi
-done
-
 #################
 # SET THE SHELL #
 #################
-
-#sudo chsh --shell "/usr/bin/zsh" "$(whoami)"
-cp "${CODESPACES_HOME}/.zshrc.codespaces" "${HOME}/.config/zsh/.zshrc.local" # Panorama shell includes
-
 . "${CODESPACES_HOME}/install-fish.sh"
 cp "${CODESPACES_HOME}/config.codespaces.fish" "${HOME}/.config/fish/config.local.fish" # Panorama shell includes
 sudo chsh --shell "/usr/bin/fish" "$(whoami)"

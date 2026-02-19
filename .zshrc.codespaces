@@ -1,8 +1,0 @@
-export CDPATH=".:/workspaces/monorama/apps:${CDPATH}"
-
-# Prevent Lynx from trying and failing to help us log in with AWS SSO
-export BROWSER="/bin/true"
-
-if [[ $CODESPACES == "true" ]]; then
-  source $HOME/.panoramarc
-fi
