@@ -7,8 +7,10 @@ MONOREPO_HOME="/workspaces/monorama"
 # HOMEBREW #
 ############
 
-# APT-based install of GNU Stow is failing in Ubuntu 24.04 based images, but I
-# am also installing it via brew
+# APT-based install of GNU Stow is failing in Ubuntu 24.04 based images, which
+# prevents successful restoration of dotfiles.  Otherwise ideally this section
+# would come later.
+
 BREW_COMMAND="/home/linuxbrew/.linuxbrew/bin/brew" # `brew` is not in path since `config.fish` is not sourced
 BREWFILE_PATH="${CODESPACES_HOME}/Brewfile"        # ${HOMEBREW_BUNDLE_FILE} is not exported since `config.fish` is not sourced
 
@@ -26,7 +28,7 @@ git clone https://github.com/wthollingsworth/.dotfiles.git "${DOTFILES_HOME}" >/
 
 # Install dotfiles with stow
 #sudo apt install stow
-for dir in "${DOTFILES_HOME}"/*/; do
+for dir in "${DOTFILES_HOME}"/*/; do # newer versions of stow will try to read individual files without the trailing /
   stow --dir="${DOTFILES_HOME}" --target="${HOME}" "$(basename "${dir}")"
 done
 
