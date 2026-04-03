@@ -32,6 +32,10 @@ for dir in "${DOTFILES_HOME}"/*/; do # newer versions of stow will try to read i
   stow --dir="${DOTFILES_HOME}" --target="${HOME}" "$(basename "${dir}")"
 done
 
+GIT_CONFIG_HOME="${HOME}/.config/git"
+cp "${CODESPACES_HOME}/.gitconfig.delta" "${GIT_CONFIG_HOME}/delta.gitconfig"
+cp "${CODESPACES_HOME}/.gitconfig.codespaces" "${GIT_CONFIG_HOME}/config"
+
 ####################
 # INSTALL SOFTWARE #
 ####################
@@ -64,6 +68,9 @@ cat <<-EOF >"${MONOREPO_HOME}/.git/info/exclude"
 EOF
 
 cp --recursive "${CODESPACES_HOME}/.codespaces.helix" "${MONOREPO_HOME}/.helix"
+
+# Cursor CLI
+curl https://cursor.com/install -fsS | bash
 
 #################
 # SET THE SHELL #
