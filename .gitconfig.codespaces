@@ -1,2 +1,6 @@
 [include]
     path = ~/.config/git/delta.gitconfig
+
+[alias]
+  co = checkout
+  please = push --force-with-lease
