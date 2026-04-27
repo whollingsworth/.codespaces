@@ -69,8 +69,11 @@ EOF
 
 cp --recursive "${CODESPACES_HOME}/.codespaces.helix" "${MONOREPO_HOME}/.helix"
 
-# Cursor CLI
-curl https://cursor.com/install -fsS | bash
+# Cursor
+#curl https://cursor.com/install -fsS | bash
+source "${SCRIPT_DIR}/scripts/_lib.sh"
+bash "${SCRIPT_DIR}/scripts/install-cursor-settings.sh"
+bash "${SCRIPT_DIR}/scripts/install-extensions.sh"
 
 #################
 # SET THE SHELL #
